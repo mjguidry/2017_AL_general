@@ -114,8 +114,12 @@ div.tooltip {
 		type="text/javascript"></script>
 	
 	<script type="text/javascript">
+	  var json_test=d3.json("./private/auth.json",function(error, treeData) {
+ 	  	root = treeData[0];
+	  	auth = root["Authorization"];	  
+				});
 	  var mapOptions = ["Results", 
-		  				"Gillespie vs 2014 US Senate", 
+		  				"Moore vs 2014 US Senate", 
 		  				"Northam vs 2013 AL Lt Gov",
 		  				"R votes vs 2013 AL Gov"];
 // 	  var select = d3.select('#tableDiv')
@@ -129,7 +133,7 @@ div.tooltip {
 // 		.text(function (d) { return d; });
 	  
 	  var now = Date.now();
-	  var nowFormat = d3.timeFormat("%I:%M %p EDT, %b %e");
+	  var nowFormat = d3.timeFormat("%I:%M %p EST, %b %e");
 	  var nowString = "Results as of "+nowFormat(now);
 	  d3.select("body").append("h3").text(nowString)
 	  var chartDiv = document.getElementById("chart");
@@ -155,7 +159,7 @@ div.tooltip {
 		var names_arr = new Array();
 		var color_domain = [0.05,0.1,0.15,0.2,0.3,0.4,0.5];
 		function color_scale(cand){
-			if(cand=="Northam"){color_range=['#BEC3FF',
+			if(cand=="Jones"){color_range=['#BEC3FF',
 				'#A2ACFF',
 				'#8496FF',
 				'#5F81FF',
@@ -165,7 +169,7 @@ div.tooltip {
 				'#0039FD',
 				'#002DFC',
 				'#0025FA'];}
-			else if(cand=="Gillespie"){color_range=['#FEB3A3',
+			else if(cand=="Moore"){color_range=['#FEB3A3',
 				'#F89581',
 				'#F17661',
 				'#E75541',
@@ -175,7 +179,7 @@ div.tooltip {
 				'#B20000',
 				'#A30000',
 				'#940000'];}
-			else if(cand=="Hyra" || cand=="WriteIn"){color_range=['#A3D39A',
+			else if(cand=="WriteIn"){color_range=['#A3D39A',
 				'#7EC175',
 				'#56AF4F',
 				'#1D9D24',
@@ -204,7 +208,7 @@ div.tooltip {
 	           .style("text-align","left")
 	           .style("width",col_width.toString()+"%");
 	        
-		 var key_cands=["Gillespie","Northam"];
+		 var key_cands=["Moore","Jones"];
 	     for (cand in key_cands) {
 			lbody.append("tr")
 	            .selectAll("td")
@@ -233,10 +237,10 @@ div.tooltip {
 		xmlhttp_state
 				.open(
 						"GET",
-						"https://api.decisiondeskhq.com/voting/1011/",
+						"https://api.decisiondeskhq.com/voting/1013/",
 						true);
 		xmlhttp_state.setRequestHeader('Accept', 'application/json');
-
+		xmlhttp_state.setRequestHeader('Authorization', auth);
 		xmlhttp_state.setRequestHeader('Content-Type',
 				'application/json; charset=UTF-8');
 		xmlhttp_state.send();
@@ -261,10 +265,10 @@ d3.select("#footerDiv").append("text")
 		xmlhttp
 				.open(
 						"GET",
-						"https://api.decisiondeskhq.com/voting/county/1011/",
+						"https://api.decisiondeskhq.com/voting/county/1013/",
 						true);
 		xmlhttp.setRequestHeader('Accept', 'application/json');
-
+		xmlhttp.setRequestHeader('Authorization', auth);
 		xmlhttp.setRequestHeader('Content-Type',
 				'application/json; charset=UTF-8');
 		xmlhttp.send();
@@ -629,8 +633,8 @@ function onchange() {
 			d.style("fill",color);
 		});
 	}
-	if(selectValue=="Gillespie vs 2014 US Senate"){
-		d3.csv("./data_files/2014_Gillespie_pct.csv", function(data) {
+	if(selectValue=="Moore vs 2014 US Senate"){
+		d3.csv("./data_files/2014_Moore_pct.csv", function(data) {
 			  data.forEach(function(d) {
 			    d.Pct = +d.Pct;
 			    var str=d.County;
@@ -639,7 +643,7 @@ function onchange() {
 				str=str.replace(" ","_");
 				str=str.replace(".","");
 				if(county_totals[d.County]>0){
-					Gillespie_pct=votes_dict[d.County]["Gillespie"]/county_totals[d.County];}
+					Moore_pct=votes_dict[d.County]["Gillespie"]/county_totals[d.County];}
 				else{Gillespie_pct=0;}
 				if(county_totals[d.County]==0){color=color_scale("Tied")(0);}
 				else if(d.Pct<Gillespie_pct){color=color_scale("Gillespie")(Gillespie_pct-d.Pct)}
